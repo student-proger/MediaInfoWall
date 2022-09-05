@@ -106,6 +106,8 @@ def main():
     path = path[:k + 1]
     print("PATH: " + path)
 
+    print(os.listdir(path))
+
     app = QtWidgets.QApplication(sys.argv)
     window = MIWApp()
     window.show()

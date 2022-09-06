@@ -26,12 +26,6 @@ class Ui_MainWindow(object):
         self.widget.setObjectName("widget")
         self.verticalLayout_2.addWidget(self.widget)
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menuBar = QtWidgets.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 1011, 21))
-        self.menuBar.setObjectName("menuBar")
-        self.menu123 = QtWidgets.QMenu(self.menuBar)
-        self.menu123.setObjectName("menu123")
-        MainWindow.setMenuBar(self.menuBar)
         self.loadCommandsAction = QtWidgets.QAction(MainWindow)
         self.loadCommandsAction.setObjectName("loadCommandsAction")
         self.saveCommandsAction = QtWidgets.QAction(MainWindow)
@@ -50,16 +44,13 @@ class Ui_MainWindow(object):
         self.tabbedWindowViewAction.setObjectName("tabbedWindowViewAction")
         self.action123 = QtWidgets.QAction(MainWindow)
         self.action123.setObjectName("action123")
-        self.menu123.addAction(self.action123)
-        self.menuBar.addAction(self.menu123.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Linux Remote Master"))
-        self.menu123.setTitle(_translate("MainWindow", "123"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Media Info Wall"))
         self.loadCommandsAction.setText(_translate("MainWindow", "Загрузить..."))
         self.loadCommandsAction.setShortcut(_translate("MainWindow", "Ctrl+O"))
         self.saveCommandsAction.setText(_translate("MainWindow", "Сохранить..."))

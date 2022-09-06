@@ -44,6 +44,13 @@ class MIWApp(QtWidgets.QMainWindow, mainform.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
+        f = open(path + "settings.ini", "rt")
+        for line in f:
+            if line.startswith("MEDIA_FOLDER"):
+                s = line.split("=")[1]
+                self.mediafolder = s.strip()
+        f.close()
+
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
         self.videoWidget = QVideoWidget()
         self.layout = QVBoxLayout()
@@ -55,18 +62,28 @@ class MIWApp(QtWidgets.QMainWindow, mainform.Ui_MainWindow):
         self.mediaPlayer.positionChanged.connect(self.positionChanged)
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
         self.mediaPlayer.error.connect(self.handleError)
-        self.action123.triggered.connect(self.openFile)
 
-    def openFile(self):
-        fileName, _ = QFileDialog.getOpenFileName(self, "Open Movie",
-                                                  QDir.homePath())
+        self.fileslist = os.listdir(self.mediafolder + "\\video\\")
+        self.footages = os.listdir(path + "footage\\")
+        self.currentFileIndex = -1
+        self.currentFootageIndex = 0
+        self.footagePlaying = True
 
-        if fileName != '':
+        if self.footagePlaying:
+            self.openFile(path + "footage\\" + self.footages[self.currentFootageIndex])
+        else:
+            self.openFile(self.mediafolder + "\\video\\" + self.fileslist[self.currentFileIndex])
+
+
+
+    def openFile(self, fn):
+        if fn != '':
             self.mediaPlayer.setMedia(
-                QMediaContent(QUrl.fromLocalFile(fileName)))
+                QMediaContent(QUrl.fromLocalFile(fn)))
             #self.playButton.setEnabled(True)
         self.showFullScreen()  # self.showNormal() or self.showMaximized()
-        self.play()
+        self.mediaPlayer.play()
+
 
     def play(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -81,7 +98,21 @@ class MIWApp(QtWidgets.QMainWindow, mainform.Ui_MainWindow):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             pass
         else:
-            pass
+            print("Stopped...")
+            self.footagePlaying = not self.footagePlaying
+
+            if self.footagePlaying:
+                self.currentFootageIndex = self.currentFootageIndex + 1
+                if self.currentFootageIndex >= len(self.footages):
+                    self.currentFootageIndex = 0
+                self.openFile(path + "footage\\" + self.footages[self.currentFootageIndex])
+            else:
+                self.currentFileIndex = self.currentFileIndex + 1
+                if self.currentFileIndex >= len(self.fileslist):
+                    self.currentFileIndex = 0
+                self.openFile(self.mediafolder + "\\video\\" + self.fileslist[self.currentFileIndex])
+            self.mediaPlayer.play()
+
 
     def positionChanged(self, position):
         #self.positionSlider.setValue(position)
@@ -105,8 +136,6 @@ def main():
             k = i
     path = path[:k + 1]
     print("PATH: " + path)
-
-    print(os.listdir(path))
 
     app = QtWidgets.QApplication(sys.argv)
     window = MIWApp()

@@ -63,25 +63,46 @@ class MIWApp(QtWidgets.QMainWindow, mainform.Ui_MainWindow):
         self.mediaPlayer.durationChanged.connect(self.durationChanged)
         self.mediaPlayer.error.connect(self.handleError)
 
+        self.__class__.keyPressEvent = self.PressEvent
+
         self.fileslist = os.listdir(self.mediafolder + "\\video\\")
         self.footages = os.listdir(path + "footage\\")
         self.currentFileIndex = -1
         self.currentFootageIndex = 0
         self.footagePlaying = True
+        self.fullScreen = True
+
+        self.showFullScreen()
 
         if self.footagePlaying:
             self.openFile(path + "footage\\" + self.footages[self.currentFootageIndex])
         else:
             self.openFile(self.mediafolder + "\\video\\" + self.fileslist[self.currentFileIndex])
 
+    def PressEvent(self, event):
+        """
+        Событие нажатия кнопок клавиатуры в списке хостов.
 
+        :param event: событие
+        """
+        if event.key() == QtCore.Qt.Key_F11:  # F11 - полный экран
+            self.fullScreen = not self.fullScreen
+            if self.fullScreen:
+                self.showFullScreen()
+            else:
+                self.showNormal()
+
+        if event.key() == QtCore.Qt.Key_Enter:  # Enter - пауза
+            print("!!!")
+            if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+                self.mediaPlayer.pause()
+            else:
+                self.mediaPlayer.play()
 
     def openFile(self, fn):
         if fn != '':
             self.mediaPlayer.setMedia(
                 QMediaContent(QUrl.fromLocalFile(fn)))
-            #self.playButton.setEnabled(True)
-        self.showFullScreen()  # self.showNormal() or self.showMaximized()
         self.mediaPlayer.play()
 
 

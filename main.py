@@ -65,8 +65,19 @@ class MIWApp(QtWidgets.QMainWindow, mainform.Ui_MainWindow):
 
         self.__class__.keyPressEvent = self.PressEvent
 
-        self.fileslist = os.listdir(self.mediafolder + "\\video\\")
-        self.footages = os.listdir(path + "footage\\")
+        self.fileslist = []
+        self.footages = []
+
+        try:
+            self.fileslist = os.listdir(self.mediafolder + "\\video\\")
+        except FileNotFoundError:
+            pass
+
+        try:
+            self.footages = os.listdir(path + "footage\\")
+        except FileNotFoundError:
+            pass
+
         self.currentFileIndex = -1
         self.currentFootageIndex = 0
         self.footagePlaying = True
@@ -74,10 +85,8 @@ class MIWApp(QtWidgets.QMainWindow, mainform.Ui_MainWindow):
 
         self.showFullScreen()
 
-        if self.footagePlaying:
-            self.openFile(path + "footage\\" + self.footages[self.currentFootageIndex])
-        else:
-            self.openFile(self.mediafolder + "\\video\\" + self.fileslist[self.currentFileIndex])
+        self.openFile(path + "footage\\" + self.footages[self.currentFootageIndex])
+
 
     def PressEvent(self, event):
         """
@@ -131,7 +140,8 @@ class MIWApp(QtWidgets.QMainWindow, mainform.Ui_MainWindow):
                 self.currentFileIndex = self.currentFileIndex + 1
                 if self.currentFileIndex >= len(self.fileslist):
                     self.currentFileIndex = 0
-                self.openFile(self.mediafolder + "\\video\\" + self.fileslist[self.currentFileIndex])
+                if len(self.fileslist) > 0:
+                    self.openFile(self.mediafolder + "\\video\\" + self.fileslist[self.currentFileIndex])
             self.mediaPlayer.play()
 
 
